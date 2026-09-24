@@ -3,6 +3,17 @@ import { useState } from "react";
 
 export default function Home() {
   const [isCheckOutOpen, setISCheckOutOpen] = useState(false);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [expiry, setExpiry] = useState("");
+  const [cvv, setCvv] = useState("");
+
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState<
+    "idle" | "success" | "error"
+  >("idle");
+  const [errorMessage, setErrorMessage] = useState("");
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -117,26 +128,128 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-sm text-slate-400">Product</span>
+            {showPaymentForm ? (
+              <div className="mt-8">
+                <div className="mb-6">
+                  <p className="text-sm text-slate-400">Amount to pay</p>
 
-                <span className="font-medium">Pro Plan</span>
+                  <p className="mt-1 text-2xl font-bold">₹999</p>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Email
+                  </label>
+
+                  <input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
+                  />
+                </div>
+
+                {/* Card Number */}
+                <div className="mt-5">
+                  <label
+                    htmlFor="cardNumber"
+                    className="mb-2 block text-sm font-medium"
+                  >
+                    Card number
+                  </label>
+
+                  <input
+                    id="cardNumber"
+                    type="text"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value)}
+                    inputMode="numeric"
+                    placeholder="4242 4242 4242 4242"
+                    className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
+                  />
+                </div>
+
+                {/* Expiry + CVV */}
+                <div className="mt-5 grid grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="expiry"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      Expiry
+                    </label>
+
+                    <input
+                      id="expiry"
+                      type="text"
+                      value={expiry}
+                      onChange={(e) => setExpiry(e.target.value)}
+                      placeholder="12/28"
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor="cvv"
+                      className="mb-2 block text-sm font-medium"
+                    >
+                      CVV
+                    </label>
+
+                    <input
+                      id="cvv"
+                      type="password"
+                      value={cvv}
+                      onChange={(e) => setCvv(e.target.value)}
+                      placeholder="123"
+                      maxLength={3}
+                      className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm outline-none placeholder:text-slate-500 focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+
+                {/* Pay Button */}
+                <button
+                  type="button"
+                  className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold transition hover:bg-blue-500"
+                >
+                  Pay ₹999
+                </button>
               </div>
+            ) : (
+              <>
+                {/* Product Summary */}
+                <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-400">Product</span>
 
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-sm text-slate-400">Price</span>
+                    <span className="font-medium">Pro Plan</span>
+                  </div>
 
-                <span className="text-lg font-semibold">₹999</span>
-              </div>
-            </div>
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-sm text-slate-400">Price</span>
 
-            <button
-              type="button"
-              className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold transition hover:bg-blue-500"
-            >
-              Continue to Payment
-            </button>
+                    <span className="text-lg font-semibold">₹999</span>
+                  </div>
+                </div>
+
+                {/* Continue Button */}
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentForm(true)}
+                  className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold transition hover:bg-blue-500"
+                >
+                  Continue to Payment
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
