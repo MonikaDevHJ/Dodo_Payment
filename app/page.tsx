@@ -14,6 +14,35 @@ export default function Home() {
     "idle" | "success" | "error"
   >("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [paymentAttempt, setPaymentAttempt] = useState(0);
+
+  const handlePayment = () => {
+    setIsProcessing(true);
+    setPaymentStatus("idle");
+    setErrorMessage("");
+
+    setTimeout(() => {
+      if (cardNumber === "4242 4242 4242 4242") {
+        setPaymentStatus("success");
+      } else if (cardNumber === "4000 0000 0000 0002") {
+        setPaymentStatus("error");
+        setErrorMessage("Your card was declined.");
+      } else if (cardNumber === "4000 0000 0000 0341") {
+        if (paymentAttempt === 0) {
+          setPaymentAttempt(1);
+          setPaymentStatus("error");
+          setErrorMessage("Payment failed. Please try again.");
+        } else {
+          setPaymentStatus("success");
+        }
+      } else {
+        setPaymentStatus("error");
+        setErrorMessage("Invalid test card number.");
+      }
+
+      setIsProcessing(false);
+    }, 1500);
+  };
 
   return (
     <main className="min-h-screen bg-slate-950 text-white">
@@ -218,10 +247,42 @@ export default function Home() {
                 {/* Pay Button */}
                 <button
                   type="button"
+                  onClick={handlePayment}
+                  disabled={isProcessing}
                   className="mt-6 w-full rounded-xl bg-blue-600 px-5 py-3.5 text-sm font-semibold transition hover:bg-blue-500"
                 >
-                  Pay ₹999
+                  {isProcessing ? "Processing..." : "Pay ₹999"}
                 </button>
+
+                {paymentStatus === "success" && (
+                  <div className="mt-4 rounded-xl border border-emerald-400/20 bg-emerald-400/10 p-4 text-center">
+                    <p className="font-semibold text-emerald-300">
+                      Payment successful!
+                    </p>
+
+                    <p className="mt-1 text-sm text-emerald-200/70">
+                      Your Pro Plan purchase is complete.
+                    </p>
+                  </div>
+                )}
+
+                {paymentStatus === "error" && (
+                  <div className="mt-4 rounded-xl border border-red-400/20 bg-red-400/10 p-4 text-center">
+                    <p className="font-semibold text-red-300">Payment failed</p>
+
+                    <p className="mt-1 text-sm text-red-200/70">
+                      {errorMessage}
+                    </p>
+
+                    <button
+                      type="button"
+                      onClick={handlePayment}
+                      className="mt-4 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium transition hover:bg-white/20"
+                    >
+                      Try Again
+                    </button>
+                  </div>
+                )}
               </div>
             ) : (
               <>
