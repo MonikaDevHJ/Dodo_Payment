@@ -18,8 +18,7 @@ export type CheckoutOptions = {
   onError?: (data: CheckoutError) => void;
 };
 
-const CHECKOUT_ORIGIN =
-  "https://dodo-checkout-app-eight.vercel.app";
+const CHECKOUT_ORIGIN = "https://dodo-checkout-app-eight.vercel.app";
 let checkoutContainer: HTMLDivElement | null = null;
 let messageHandler: ((event: MessageEvent) => void) | null = null;
 
@@ -47,7 +46,7 @@ export const DodoCheckout = {
 
     iframe.src = `${CHECKOUT_ORIGIN}?productId=${encodeURIComponent(
       options.productId
-    )}`;
+    )}&parentOrigin=${encodeURIComponent(window.location.origin)}`;
 
     iframe.title = "Dodo Checkout";
 
@@ -72,7 +71,7 @@ export const DodoCheckout = {
       // Payment successful
       if (event.data?.type === "PAYMENT_SUCCESS") {
         options.onSuccess?.({
-          sessionId: event.data.sessionId,
+          sessionId: event.data.sessionId
         });
 
         closeCheckout();
@@ -83,7 +82,7 @@ export const DodoCheckout = {
       if (event.data?.type === "PAYMENT_ERROR") {
         options.onError?.({
           code: event.data.code,
-          message: event.data.message,
+          message: event.data.message
         });
 
         return;
@@ -92,7 +91,7 @@ export const DodoCheckout = {
       // Checkout closed
       if (event.data?.type === "CHECKOUT_CLOSE") {
         options.onClose?.({
-          reason: "user_closed",
+          reason: "user_closed"
         });
 
         closeCheckout();
@@ -100,7 +99,7 @@ export const DodoCheckout = {
     };
 
     window.addEventListener("message", messageHandler);
-  },
+  }
 };
 
 function closeCheckout() {
